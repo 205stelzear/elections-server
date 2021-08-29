@@ -19,10 +19,6 @@ export class EnvironmentConfig {
 	@IsNumber()
 	readonly PORT: number = DEFAULT_PORT;
 
-	@Type(() => Number)
-	@IsNumber()
-	readonly GRAPHQL_DEPTH_LIMIT: number = DEFAULT_GRAPHQL_DEPTH_LIMIT;
-
 	@IsString()
 	readonly KEY!: string;
 

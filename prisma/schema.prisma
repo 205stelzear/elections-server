@@ -8,7 +8,7 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialActions", "nApi"]
+  previewFeatures = ["referentialActions", "nApi", "interactiveTransactions"]
 }
 
 generator nestgraphql {
@@ -20,26 +20,41 @@ generator nestgraphql {
   fields_Validator_input = true
 }
 
-model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique
-  firstName String?   @map("first_name")
-  lastName  String?   @map("last_name")
-  messages  Message[]
-
-  @@map("users")
+enum ElectionType {
+  shared
+  virtual
 }
 
-model Message {
-  id   Int      @id @default(autoincrement())
-  /// @Validator.IsNotEmpty()
-  text String
+model Election {
   /// @HideField({ output: false, input: true })
-  time DateTime @default(now())
-  user User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id            Int          @id @default(autoincrement())
+  /// @HideField({ output: false, input: true })
+  code          String       @unique
+  /// @HideField({ output: false, input: true })
+  numbeOfJoined Int          @default(0) @map("numbe_of_joined")
+  /// @HideField({ output: false, input: true })
+  voterCount    Int          @default(0) @map("voter_count")
+  /// @HideField({ output: false, input: true })
+  lastUsed      DateTime     @default(now()) @map("last_used")
+  /// @HideField({ output: false, input: true })
+  type          ElectionType @default(shared)
+  /// @Validator.IsNotEmpty()
+  data          Json
 
+  photo   Photo?
   /// @HideField({ output: true, input: true })
-  userId Int
+  photoId Int?
 
-  @@map("messages")
+  @@map("elections")
+}
+
+model Photo {
+  id   Int    @id @default(autoincrement())
+  data String
+
+  election Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+
+  electionId Int
+
+  @@map("photos")
 }
