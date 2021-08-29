@@ -1,7 +1,7 @@
 {
-  "name": "node-api-backend",
+  "name": "scouts-elections-server",
   "version": "0.0.0",
-  "description": "",
+  "description": "The server to handle synchronization between multiple devices for a single election.",
   "author": "Guillaume Marcoux",
   "private": true,
   "license": "MIT",
