@@ -21,6 +21,8 @@ export class VirtualElectionController {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
+
+		// TODO : Implement
 	}
 
 	@Put('vote')
@@ -28,6 +30,8 @@ export class VirtualElectionController {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
+
+		// TODO : Implement
 	}
 
 	@Get('retrieve')
@@ -35,5 +39,7 @@ export class VirtualElectionController {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
+
+		// TODO : Implement
 	}
 }

@@ -27,19 +27,29 @@ enum ElectionType {
 
 model Election {
   /// @HideField({ output: false, input: true })
-  id            Int          @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   /// @HideField({ output: false, input: true })
-  code          String       @unique
+  code           String       @unique
   /// @HideField({ output: false, input: true })
-  numbeOfJoined Int          @default(0) @map("numbe_of_joined")
+  numberOfJoined Int          @default(0) @map("number_of_joined")
   /// @HideField({ output: false, input: true })
-  voterCount    Int          @default(0) @map("voter_count")
+  lastUsed       DateTime     @default(now()) @map("last_used")
   /// @HideField({ output: false, input: true })
-  lastUsed      DateTime     @default(now()) @map("last_used")
-  /// @HideField({ output: false, input: true })
-  type          ElectionType @default(shared)
+  type           ElectionType @default(shared)
+
+  dbName                     String
+  dbPsw                      String?
+  numberOfVoters             Int      @map("number_of_voters")
+  numberOfVotePerVoterMin    Int      @map("number_of_vote_per_voter_min")
+  numberOfVotePerVoterMax    Int      @map("number_of_vote_per_voter_max")
+  allowMultipleSameCandidate Boolean? @map("allow_multiple_same_candidate")
+  numberOfVoted              Int      @default(0) @map("number_of_voted")
+  numberOfSeatsTaken         Int      @default(0) @map("number_of_seats_taken")
+  hasSkipped                 Boolean  @default(false) @map("has_skipped")
+  isDownloadDisabled         Boolean  @default(false) @map("is_download_disabled")
+
   /// @Validator.IsNotEmpty()
-  data          Json
+  candidatesData Json
 
   photo   Photo?
   /// @HideField({ output: true, input: true })

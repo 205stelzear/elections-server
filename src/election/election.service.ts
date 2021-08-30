@@ -1,8 +1,8 @@
 import { PrismaService } from '$/prisma.service';
-import { Election, ElectionType, Photo, Prisma } from '.prisma/client';
+import { Election, ElectionType, Photo } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { CreateElectionDto } from './dto/create-election.dto';
-import { ElectionDataDto } from './dto/election-data.dto';
+import { CandidateData } from './dto/election-data.dto';
 import { VoteCandidatesDto } from './dto/vote-candidates.dto';
 
 export type GetElectionOptions = {
@@ -31,21 +31,15 @@ export class ElectionService {
 	}
 
 	async create(createElectionDto: CreateElectionDto, electionType?: ElectionType) {
-		const photoData = createElectionDto.groupImage;
+		const { candidates, groupImage: photoData, ...restElectionData } = createElectionDto;
 
-		const { candidates, ...restElectionData } = createElectionDto;
-
-		// Do not include groupImage in election's data to reduce json size
-		delete restElectionData.groupImage;
-
-		const electionData: ElectionDataDto = {
-			...restElectionData,
-			candidates: candidates.map((c) => ({
-				name: c,
+		const electionCandidates = candidates.map(
+			(candidate): CandidateData => ({
+				name: candidate,
 				voteCount: 0,
 				selectedState: 'selected',
-			})),
-		};
+			}),
+		);
 
 		const [election, photo] = await this.prisma.$transaction(async (prisma) => {
 			let success = false;
@@ -60,8 +54,9 @@ export class ElectionService {
 					election = await prisma.election.create({
 						data: {
 							code: code,
-							data: electionData as unknown as Prisma.JsonObject,
 							type: electionType,
+							candidatesData: electionCandidates,
+							...restElectionData,
 						},
 					});
 
@@ -96,7 +91,7 @@ export class ElectionService {
 				code,
 			},
 			data: {
-				numbeOfJoined: {
+				numberOfJoined: {
 					increment: 1,
 				},
 			},
@@ -131,13 +126,13 @@ export class ElectionService {
 			return null;
 		}
 
-		const electionData = election.data as unknown as ElectionDataDto;
+		const candidatesData = election.candidatesData as CandidateData[];
 
-		voteCandidatesDto.candidates.forEach((candidate) => electionData.candidates[candidate].voteCount++);
+		voteCandidatesDto.candidates.forEach((candidate) => candidatesData[candidate].voteCount++);
 
 		const properElectionData = await this.prisma.election.update({
 			data: {
-				data: electionData as unknown as Prisma.JsonObject,
+				candidatesData: candidatesData,
 			},
 			where: {
 				code: election.code,

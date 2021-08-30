@@ -16,10 +16,9 @@ export class ElectionController {
 	async create(@Body() createElectionDto: CreateElectionDto) {
 		const { election } = await this.electionService.create(createElectionDto);
 
-		// Do not include groupImage in election's data to reduce json size
-		delete createElectionDto.groupImage;
+		const { code, ...electionData } = election;
 
-		return { code: election.code, data: createElectionDto as Omit<CreateElectionDto, 'groupImage'> };
+		return { code, data: electionData };
 	}
 
 	// /:electionCode([A-NP-Z1-9]{6})
@@ -58,6 +57,8 @@ export class ElectionController {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
+
+		// TODO : Implement
 	}
 
 	@Put('skip')
@@ -65,6 +66,8 @@ export class ElectionController {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
+
+		// TODO : Implement
 	}
 
 	@Get('retrieve')
@@ -72,6 +75,8 @@ export class ElectionController {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
+
+		// TODO : Implement
 	}
 
 	@Put('update-candidate')
@@ -79,6 +84,8 @@ export class ElectionController {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
+
+		// TODO : Implement
 	}
 
 	@Delete('delete')
@@ -86,5 +93,7 @@ export class ElectionController {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
+
+		// TODO : Implement
 	}
 }
