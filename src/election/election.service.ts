@@ -254,4 +254,18 @@ export class ElectionService {
 
 		return properElectionData;
 	}
+
+	async delete(code: string) {
+		try {
+			const election = await this.prisma.election.delete({
+				where: {
+					code,
+				},
+			});
+
+			return election;
+		} catch (error) {
+			return null;
+		}
+	}
 }
