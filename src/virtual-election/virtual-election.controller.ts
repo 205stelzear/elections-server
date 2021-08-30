@@ -1,5 +1,5 @@
 import { CreateElectionDto } from '$/election/dto/create-election.dto';
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { VirtualElectionService } from './virtual-election.service';
 
 @Controller('virtual')
@@ -17,17 +17,23 @@ export class VirtualElectionController {
 	}
 
 	@Get('join')
-	async join(@Query('code') _electionCode?: string) {
-		// TODO : Implement
+	async join(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
 	}
 
 	@Put('vote')
-	async vote(@Query('code') _electionCode?: string) {
-		// TODO : Implement
+	async vote(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
 	}
 
 	@Get('retrieve')
-	async retrieve(@Query('code') _electionCode?: string) {
-		// TODO : Implement
+	async retrieve(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
 	}
 }

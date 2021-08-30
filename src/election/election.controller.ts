@@ -54,27 +54,37 @@ export class ElectionController {
 	}
 
 	@Get('seat')
-	async takeSeat(@Query('code') _electionCode?: string) {
-		// TODO : Implement
+	async takeSeat(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
 	}
 
 	@Put('skip')
-	async skip(@Query('code') _electionCode?: string) {
-		// TODO : Implement
+	async skip(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
 	}
 
 	@Get('retrieve')
-	async retrieve(@Query('code') _electionCode?: string) {
-		// TODO : Implement
+	async retrieve(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
 	}
 
 	@Put('update-candidate')
-	async updateCandidateState(@Query('code') _electionCode?: string) {
-		// TODO : Implement
+	async updateCandidateState(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
 	}
 
 	@Delete('delete')
-	async delete(@Query('code') _electionCode?: string) {
-		// TODO : Implement
+	async delete(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
 	}
 }
