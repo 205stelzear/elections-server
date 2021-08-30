@@ -2,7 +2,7 @@ import { PrismaService } from '$/prisma.service';
 import { ElectionType } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { CreateElectionDto } from './dto/create-election.dto';
-import { CandidateData } from './dto/election-data.dto';
+import { CandidateData, ShortCandidateData } from './dto/election-data.dto';
 import { VoteCandidatesDto } from './dto/vote-candidates.dto';
 
 function keyIsInObject<T>(key: string | number | symbol, object: T): key is keyof T {
@@ -220,5 +220,38 @@ export class ElectionService {
 		}
 
 		return election;
+	}
+
+	async updateCandidateState(code: string, candidateData: ShortCandidateData) {
+		const election = await this.prisma.election.findUnique({
+			where: {
+				code,
+			},
+		});
+
+		if (!election) {
+			return null;
+		}
+
+		const candidatesData = election.candidatesData as CandidateData[];
+
+		const candidate = candidatesData.find((candidate) => candidate.name == candidateData.name);
+
+		if (!candidate) {
+			return `Candidate ${candidateData.name} does not exist in election with code ${election.code}.`;
+		}
+
+		candidate.selectedState = candidateData.selectedState;
+
+		const properElectionData = await this.prisma.election.update({
+			data: {
+				candidatesData: candidatesData,
+			},
+			where: {
+				code: election.code,
+			},
+		});
+
+		return properElectionData;
 	}
 }

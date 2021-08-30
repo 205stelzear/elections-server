@@ -11,6 +11,7 @@ import {
 	Query,
 } from '@nestjs/common';
 import { CreateElectionDto } from './dto/create-election.dto';
+import { UpdateCandidateDto } from './dto/update-candidate.dto';
 import { VoteCandidatesDto } from './dto/vote-candidates.dto';
 import { ElectionService } from './election.service';
 
@@ -116,13 +117,23 @@ export class ElectionController {
 		return { code, data: retrievedData };
 	}
 
-	@Put('update-candidate')
-	async updateCandidateState(@Query('code') electionCode?: string) {
+	@Post('update-candidate')
+	async updateCandidateState(@Body() updateCandidateDto: UpdateCandidateDto, @Query('code') electionCode?: string) {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
 
-		// TODO : Implement
+		const election = await this.electionService.updateCandidateState(electionCode, updateCandidateDto.data);
+
+		if (typeof election == 'string') {
+			// election variable is not an election, it is an error message
+			throw new BadRequestException(election);
+		}
+		if (!election) {
+			throw new NotFoundException(`No election with code ${electionCode} found!`);
+		}
+
+		return { data: election };
 	}
 
 	@Delete('delete')
