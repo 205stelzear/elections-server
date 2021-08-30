@@ -1,10 +1,19 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Prisma } from '.prisma/client';
+import { IsBoolean, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export type CandidateData = {
-	name: string;
-	voteCount: number;
-	selectedState: 'selected' | 'pre-selected' | 'unselected';
-};
+export class ShortCandidateData {
+	@IsString()
+	name!: string;
+	@IsIn(['selected', 'pre-selected', 'unselected'])
+	selectedState!: 'selected' | 'pre-selected' | 'unselected';
+
+	[key: string]: Prisma.JsonValue;
+}
+
+export class CandidateData extends ShortCandidateData {
+	@IsNumber()
+	voteCount!: number;
+}
 
 export class ElectionDataBaseDto {
 	@IsString()
