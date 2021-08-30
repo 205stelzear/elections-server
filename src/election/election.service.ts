@@ -1,5 +1,5 @@
 import { PrismaService } from '$/prisma.service';
-import { Election, ElectionType, Photo } from '.prisma/client';
+import { ElectionType } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { CreateElectionDto } from './dto/create-election.dto';
 import { CandidateData } from './dto/election-data.dto';
@@ -37,52 +37,46 @@ export class ElectionService {
 			(candidate): CandidateData => ({
 				name: candidate,
 				voteCount: 0,
-				selectedState: 'selected',
+				selectedState: 'unselected',
 			}),
 		);
 
-		const [election, photo] = await this.prisma.$transaction(async (prisma) => {
-			let success = false;
+		let failedMaxAttempt = 3;
 
-			let election: Election;
-			let photo: Photo | undefined = undefined;
+		for (let attempt = 0; attempt < failedMaxAttempt; attempt++) {
+			const code = this.createCode(ElectionService.CODE_LENGTH);
 
-			do {
-				const code = this.createCode(ElectionService.CODE_LENGTH);
-
-				try {
-					election = await prisma.election.create({
-						data: {
-							code: code,
-							type: electionType,
-							candidatesData: electionCandidates,
-							...restElectionData,
-						},
-					});
-
-					success = true;
-				} catch (error) {
-					// an election already exist with created code, trying again
-				}
-			} while (!success);
-
-			if (photoData) {
-				photo = await prisma.photo.create({
+			try {
+				const election = await this.prisma.election.create({
 					data: {
-						data: photoData,
-						election: {
-							connect: {
-								id: election!.id,
-							},
-						},
+						code: code,
+						type: electionType,
+						candidatesData: electionCandidates,
+						photo: !photoData
+							? undefined
+							: {
+									create: {
+										data: photoData,
+									},
+									// eslint-disable-next-line no-mixed-spaces-and-tabs
+							  },
+						...restElectionData,
+					},
+					include: {
+						photo: {},
 					},
 				});
+
+				const { photo, ...electionData } = election;
+
+				return { election: electionData, photo };
+			} catch (error) {
+				// an election already exist with created code, trying again (not db error)
+				failedMaxAttempt += 1;
 			}
+		}
 
-			return [election!, photo];
-		});
-
-		return { election, photo };
+		throw 'Could not create election!';
 	}
 
 	async incrementJoinCount(code: string) {

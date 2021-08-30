@@ -1,4 +1,15 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Post, Put, Query } from '@nestjs/common';
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Delete,
+	Get,
+	InternalServerErrorException,
+	NotFoundException,
+	Post,
+	Put,
+	Query,
+} from '@nestjs/common';
 import { CreateElectionDto } from './dto/create-election.dto';
 import { VoteCandidatesDto } from './dto/vote-candidates.dto';
 import { ElectionService } from './election.service';
@@ -14,11 +25,15 @@ export class ElectionController {
 
 	@Post('create')
 	async create(@Body() createElectionDto: CreateElectionDto) {
-		const { election } = await this.electionService.create(createElectionDto);
+		try {
+			const { election } = await this.electionService.create(createElectionDto);
 
-		const { code, ...electionData } = election;
+			const { code, ...electionData } = election;
 
-		return { code, data: electionData };
+			return { code, data: electionData };
+		} catch (error) {
+			throw new InternalServerErrorException('An error while creating the election happened, please try again.');
+		}
 	}
 
 	// /:electionCode([A-NP-Z1-9]{6})

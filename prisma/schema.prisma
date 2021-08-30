@@ -51,9 +51,7 @@ model Election {
   /// @Validator.IsNotEmpty()
   candidatesData Json
 
-  photo   Photo?
-  /// @HideField({ output: true, input: true })
-  photoId Int?
+  photo Photo?
 
   @@map("elections")
 }
