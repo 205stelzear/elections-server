@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Put, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Post, Put, Query } from '@nestjs/common';
 import { CreateElectionDto } from './dto/create-election.dto';
 import { VoteCandidatesDto } from './dto/vote-candidates.dto';
 import { ElectionService } from './election.service';
@@ -24,47 +24,57 @@ export class ElectionController {
 
 	// /:electionCode([A-NP-Z1-9]{6})
 	@Get('join')
-	async join(@Query('code') electionCode: string) {
+	async join(@Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
+
 		const election = await this.electionService.get(electionCode, { doNotJoin: false, includePhoto: true });
 
 		if (!election) {
-			throw `No election with code ${electionCode} found!`;
+			throw new NotFoundException(`No election with code ${electionCode} found!`);
 		}
 
 		return election;
 	}
 
 	@Put('vote')
-	async vote(@Body() voteCandidatesDto: VoteCandidatesDto, @Query('code') electionCode: string) {
+	async vote(@Body() voteCandidatesDto: VoteCandidatesDto, @Query('code') electionCode?: string) {
+		if (!electionCode) {
+			throw new BadRequestException('The "code" query parameter is required!');
+		}
+
 		const election = await this.electionService.vote(electionCode, voteCandidatesDto);
 
 		if (!election) {
-			throw `No election with code ${electionCode} found!`;
+			throw new NotFoundException(`No election with code ${electionCode} found!`);
 		}
+
+		return { data: election };
 	}
 
 	@Get('seat')
-	async takeSeat(@Query('code') _electionCode: string) {
+	async takeSeat(@Query('code') _electionCode?: string) {
 		// TODO : Implement
 	}
 
 	@Put('skip')
-	async skip(@Query('code') _electionCode: string) {
+	async skip(@Query('code') _electionCode?: string) {
 		// TODO : Implement
 	}
 
 	@Get('retrieve')
-	async retrieve(@Query('code') _electionCode: string) {
+	async retrieve(@Query('code') _electionCode?: string) {
 		// TODO : Implement
 	}
 
 	@Put('update-candidate')
-	async updateCandidateState(@Query('code') _electionCode: string) {
+	async updateCandidateState(@Query('code') _electionCode?: string) {
 		// TODO : Implement
 	}
 
 	@Delete('delete')
-	async delete(@Query('code') _electionCode: string) {
+	async delete(@Query('code') _electionCode?: string) {
 		// TODO : Implement
 	}
 }

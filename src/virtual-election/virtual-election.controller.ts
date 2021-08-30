@@ -17,17 +17,17 @@ export class VirtualElectionController {
 	}
 
 	@Get('join')
-	async join(@Query('code') _electionCode: string) {
+	async join(@Query('code') _electionCode?: string) {
 		// TODO : Implement
 	}
 
 	@Put('vote')
-	async vote(@Query('code') _electionCode: string) {
+	async vote(@Query('code') _electionCode?: string) {
 		// TODO : Implement
 	}
 
 	@Get('retrieve')
-	async retrieve(@Query('code') _electionCode: string) {
+	async retrieve(@Query('code') _electionCode?: string) {
 		// TODO : Implement
 	}
 }

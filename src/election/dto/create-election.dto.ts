@@ -1,27 +1,7 @@
-export class CreateElectionDto {
-	dbName!: string;
+import { IsString } from 'class-validator';
+import { ElectionDataBaseDto } from './election-data.dto';
 
-	dbPsw?: string;
-
-	numberOfVoters!: number;
-
-	numberOfVotePerVoterMin!: number;
-
-	numberOfVotePerVoterMax!: number;
-
-	allowMultipleSameCandidate = false;
-
-	numberOfVoted = 0;
-
-	numberOfSeatsTaken = 0;
-
-	hasSkipped = false;
-
-	isDownloadDisabled = false;
-
+export class CreateElectionDto extends ElectionDataBaseDto {
+	@IsString({ each: true })
 	candidates!: string[];
-
-	groupImage?: string;
-
-	sharedElectionCode?: string;
 }

@@ -1,3 +1,3 @@
 export class VoteCandidatesDto {
-	candidates!: string[];
+	candidates!: number[];
 }
