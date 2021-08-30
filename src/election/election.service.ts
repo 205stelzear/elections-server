@@ -141,4 +141,27 @@ export class ElectionService {
 
 		return properElectionData;
 	}
+
+	async takeSeat(code: string) {
+		const election = await this.prisma.election.findUnique({
+			where: {
+				code,
+			},
+		});
+
+		if (!election) {
+			return null;
+		}
+
+		return await this.prisma.election.update({
+			data: {
+				numberOfSeatsTaken: {
+					increment: 1,
+				},
+			},
+			where: {
+				code,
+			},
+		});
+	}
 }
