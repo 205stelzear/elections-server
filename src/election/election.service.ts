@@ -5,6 +5,10 @@ import { CreateElectionDto } from './dto/create-election.dto';
 import { CandidateData } from './dto/election-data.dto';
 import { VoteCandidatesDto } from './dto/vote-candidates.dto';
 
+function keyIsInObject<T>(key: string | number | symbol, object: T): key is keyof T {
+	return key in object;
+}
+
 export type GetElectionOptions = {
 	/** Prevents incrementing the number_of_joined number. */
 	doNotJoin: boolean;
@@ -178,5 +182,43 @@ export class ElectionService {
 				code,
 			},
 		});
+	}
+
+	async retrieve(code: string, doIncludePhoto: boolean, specifyers?: string[]) {
+		const election = await this.prisma.election.findUnique({
+			where: {
+				code,
+			},
+			include: {
+				photo: doIncludePhoto,
+			},
+		});
+
+		if (!election) {
+			return null;
+		}
+
+		if (specifyers?.length) {
+			const specifiedData: Record<string, unknown> = {};
+
+			specifyers.forEach((specifier) => {
+				if (keyIsInObject(specifier, election)) {
+					specifiedData[specifier] = election[specifier];
+				}
+			});
+
+			if (doIncludePhoto) {
+				specifiedData.photo = election.photo;
+			}
+
+			specifiedData.code = election.code;
+
+			return specifiedData as {
+				code: string;
+				[key: string]: unknown;
+			};
+		}
+
+		return election;
 	}
 }

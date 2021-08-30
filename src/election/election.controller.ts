@@ -98,12 +98,22 @@ export class ElectionController {
 	}
 
 	@Get('retrieve')
-	async retrieve(@Query('code') electionCode?: string) {
+	async retrieve(@Query() query: Record<string, string | undefined>) {
+		const { code: electionCode, groupImage: doIncludePhoto, ...otherQueries } = query;
+
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
 
-		// TODO : Implement
+		const electionRetrievedData = await this.electionService.retrieve(electionCode, doIncludePhoto != undefined, Object.keys(otherQueries));
+
+		if (!electionRetrievedData) {
+			throw new NotFoundException(`No election with code ${electionCode} found!`);
+		}
+
+		const { code, ...retrievedData } = electionRetrievedData;
+
+		return { code, data: retrievedData };
 	}
 
 	@Put('update-candidate')
