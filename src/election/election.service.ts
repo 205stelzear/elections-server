@@ -164,4 +164,25 @@ export class ElectionService {
 			},
 		});
 	}
+
+	async skip(code: string) {
+		const election = await this.prisma.election.findUnique({
+			where: {
+				code,
+			},
+		});
+
+		if (!election) {
+			return null;
+		}
+
+		return await this.prisma.election.update({
+			data: {
+				hasSkipped: true,
+			},
+			where: {
+				code,
+			},
+		});
+	}
 }

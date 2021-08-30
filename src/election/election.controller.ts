@@ -73,7 +73,13 @@ export class ElectionController {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
 
-		// TODO : Implement
+		const election = await this.electionService.skip(electionCode);
+
+		if (!election) {
+			throw new NotFoundException(`No election with code ${electionCode} found!`);
+		}
+
+		return { data: election };
 	}
 
 	@Get('retrieve')
