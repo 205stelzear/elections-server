@@ -1,5 +1,15 @@
 import { CreateElectionDto } from '$/election/dto/create-election.dto';
-import { BadRequestException, Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Get,
+	InternalServerErrorException,
+	NotFoundException,
+	Post,
+	Put,
+	Query,
+} from '@nestjs/common';
 import { VirtualElectionService } from './virtual-election.service';
 
 @Controller('virtual')
@@ -8,21 +18,32 @@ export class VirtualElectionController {
 
 	@Post('create')
 	async create(@Body() createElectionDto: CreateElectionDto) {
-		const { election } = await this.virtualElectionService.create(createElectionDto);
+		try {
+			const { election } = await this.virtualElectionService.create(createElectionDto);
 
-		// Do not include groupImage in election's data to reduce json size
-		delete createElectionDto.groupImage;
+			const { code, ...electionData } = election;
 
-		return { code: election.code, data: createElectionDto as Omit<CreateElectionDto, 'groupImage'> };
+			return { code, data: electionData };
+		} catch (error) {
+			throw new InternalServerErrorException('An error while creating the election happened, please try again.');
+		}
 	}
 
 	@Get('join')
-	async join(@Query('code') electionCode?: string) {
+	async join(@Query('code') electionCode?: string, @Query('admin') qAdmin?: '') {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
 
-		// TODO : Implement
+		const isAdmin = qAdmin !== undefined;
+
+		const election = await this.virtualElectionService.get(electionCode, isAdmin, { doNotJoin: false, includePhoto: true });
+
+		if (!election) {
+			throw new NotFoundException(`No election with code ${electionCode} found!`);
+		}
+
+		return election;
 	}
 
 	@Put('vote')
