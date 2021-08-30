@@ -1,5 +1,6 @@
 import { CreateElectionDto } from '$/election/dto/create-election.dto';
 import { CandidateData } from '$/election/dto/election-data.dto';
+import { VoteCandidatesDto } from '$/election/dto/vote-candidates.dto';
 import { ElectionService, GetElectionOptions } from '$/election/election.service';
 import { Injectable } from '@nestjs/common';
 
@@ -31,5 +32,9 @@ export class VirtualElectionService {
 		const returnedData = !isElectionFinished || isAdmin ? election : null;
 
 		return { code: election.code, isElectionFinished, data: returnedData };
+	}
+
+	async vote(code: string, voteCandidatesDto: VoteCandidatesDto) {
+		return this.electionService.vote(code, voteCandidatesDto, true);
 	}
 }

@@ -1,4 +1,5 @@
 import { CreateElectionDto } from '$/election/dto/create-election.dto';
+import { VoteCandidatesDto } from '$/election/dto/vote-candidates.dto';
 import {
 	BadRequestException,
 	Body,
@@ -47,12 +48,18 @@ export class VirtualElectionController {
 	}
 
 	@Put('vote')
-	async vote(@Query('code') electionCode?: string) {
+	async vote(@Body() voteCandidatesDto: VoteCandidatesDto, @Query('code') electionCode?: string) {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
 
-		// TODO : Implement
+		const election = await this.virtualElectionService.vote(electionCode, voteCandidatesDto);
+
+		if (!election) {
+			throw new NotFoundException(`No election with code ${electionCode} found!`);
+		}
+
+		return { data: election };
 	}
 
 	@Get('retrieve')
