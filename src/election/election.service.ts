@@ -34,6 +34,19 @@ export class ElectionService {
 		return result;
 	}
 
+	async updateLastUsed(code: string, prisma = this.prisma, date = new Date()) {
+		const election = await prisma.election.update({
+			where: {
+				code,
+			},
+			data: {
+				lastUsed: date,
+			},
+		});
+
+		return election;
+	}
+
 	async create(createElectionDto: CreateElectionDto, electionType?: ElectionType) {
 		const { candidates, groupImage: photoData, ...restElectionData } = createElectionDto;
 
@@ -106,8 +119,12 @@ export class ElectionService {
 			},
 		});
 
-		if (election && options?.doNotJoin) {
-			await this.incrementJoinCount(election.code);
+		if (election) {
+			if (options?.doNotJoin) {
+				await this.incrementJoinCount(election.code);
+			}
+
+			await this.updateLastUsed(election.code);
 		}
 
 		return election;
@@ -138,6 +155,8 @@ export class ElectionService {
 			},
 		});
 
+		await this.updateLastUsed(election.code);
+
 		return properElectionData;
 	}
 
@@ -152,7 +171,7 @@ export class ElectionService {
 			return null;
 		}
 
-		return await this.prisma.election.update({
+		const updatedElection = await this.prisma.election.update({
 			data: {
 				numberOfSeatsTaken: {
 					increment: 1,
@@ -162,6 +181,10 @@ export class ElectionService {
 				code,
 			},
 		});
+
+		await this.updateLastUsed(updatedElection.code);
+
+		return updatedElection;
 	}
 
 	async skip(code: string) {
@@ -175,7 +198,7 @@ export class ElectionService {
 			return null;
 		}
 
-		return await this.prisma.election.update({
+		const updatedElection = await this.prisma.election.update({
 			data: {
 				hasSkipped: true,
 			},
@@ -183,6 +206,10 @@ export class ElectionService {
 				code,
 			},
 		});
+
+		await this.updateLastUsed(updatedElection.code);
+
+		return updatedElection;
 	}
 
 	async retrieve(code: string, doIncludePhoto: boolean, specifyers?: string[]) {
@@ -220,6 +247,8 @@ export class ElectionService {
 			};
 		}
 
+		await this.updateLastUsed(election.code);
+
 		return election;
 	}
 
@@ -252,6 +281,8 @@ export class ElectionService {
 				code: election.code,
 			},
 		});
+
+		await this.updateLastUsed(election.code);
 
 		return properElectionData;
 	}
