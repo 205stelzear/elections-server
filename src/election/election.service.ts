@@ -75,7 +75,6 @@ export class ElectionService {
 									create: {
 										data: photoData,
 									},
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
 							  },
 						...restElectionData,
 					},
@@ -106,7 +105,6 @@ export class ElectionService {
 					numberOfJoined: !options?.doNotJoin
 						? {
 								increment: 1,
-								// eslint-disable-next-line no-mixed-spaces-and-tabs
 						  }
 						: undefined,
 				},
