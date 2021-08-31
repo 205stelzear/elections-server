@@ -96,38 +96,31 @@ export class ElectionService {
 		throw 'Could not create election!';
 	}
 
-	async incrementJoinCount(code: string) {
-		return this.prisma.election.update({
-			where: {
-				code,
-			},
-			data: {
-				numberOfJoined: {
-					increment: 1,
-				},
-			},
-		});
-	}
-
 	async get(code: string, options?: Partial<GetElectionOptions>) {
-		const election = await this.prisma.election.findUnique({
-			where: {
-				code,
-			},
-			include: {
-				photo: options?.includePhoto,
-			},
-		});
-
-		if (election) {
-			if (options?.doNotJoin) {
-				await this.incrementJoinCount(election.code);
-			}
+		try {
+			const election = await this.prisma.election.update({
+				where: {
+					code,
+				},
+				data: {
+					numberOfJoined: !options?.doNotJoin
+						? {
+								increment: 1,
+								// eslint-disable-next-line no-mixed-spaces-and-tabs
+						  }
+						: undefined,
+				},
+				include: {
+					photo: options?.includePhoto,
+				},
+			});
 
 			await this.updateLastUsed(election.code);
-		}
 
-		return election;
+			return election;
+		} catch (error) {
+			return null;
+		}
 	}
 
 	async vote(code: string, voteCandidatesDto: VoteCandidatesDto, doUpdateVoterCount?: boolean) {
