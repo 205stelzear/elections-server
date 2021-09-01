@@ -121,7 +121,7 @@ export class ElectionService {
 		}
 	}
 
-	async vote(code: string, voteCandidatesDto: VoteCandidatesDto, doUpdateVoterCount?: boolean) {
+	async vote(code: string, voteCandidatesDto: VoteCandidatesDto) {
 		const election = await this.prisma.election.findUnique({
 			where: {
 				code,
@@ -139,7 +139,7 @@ export class ElectionService {
 		const properElectionData = await this.prisma.election.update({
 			data: {
 				candidatesData: candidatesData,
-				numberOfVoted: doUpdateVoterCount ? { increment: 1 } : undefined,
+				numberOfVoted: { increment: 1 },
 			},
 			where: {
 				code: election.code,

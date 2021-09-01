@@ -7,8 +7,8 @@ import {
 	Get,
 	InternalServerErrorException,
 	NotFoundException,
+	Patch,
 	Post,
-	Put,
 	Query,
 } from '@nestjs/common';
 import { VirtualElectionService } from './virtual-election.service';
@@ -38,16 +38,16 @@ export class VirtualElectionController {
 
 		const isAdmin = qAdmin !== undefined;
 
-		const election = await this.virtualElectionService.get(electionCode, isAdmin, { doNotJoin: false, includePhoto: true });
+		const returnValue = await this.virtualElectionService.get(electionCode, isAdmin, { doNotJoin: false, includePhoto: true });
 
-		if (!election) {
+		if (!returnValue) {
 			throw new NotFoundException(`No election with code ${electionCode} found!`);
 		}
 
-		return election;
+		return returnValue;
 	}
 
-	@Put('vote')
+	@Patch('vote')
 	async vote(@Body() voteCandidatesDto: VoteCandidatesDto, @Query('code') electionCode?: string) {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');

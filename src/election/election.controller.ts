@@ -6,8 +6,8 @@ import {
 	Get,
 	InternalServerErrorException,
 	NotFoundException,
+	Patch,
 	Post,
-	Put,
 	Query,
 } from '@nestjs/common';
 import { CreateElectionDto } from './dto/create-election.dto';
@@ -50,10 +50,10 @@ export class ElectionController {
 			throw new NotFoundException(`No election with code ${electionCode} found!`);
 		}
 
-		return election;
+		return { data: election };
 	}
 
-	@Put('vote')
+	@Patch('vote')
 	async vote(@Body() voteCandidatesDto: VoteCandidatesDto, @Query('code') electionCode?: string) {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
@@ -68,7 +68,7 @@ export class ElectionController {
 		return { data: election };
 	}
 
-	@Get('seat')
+	@Patch('seat')
 	async takeSeat(@Query('code') electionCode?: string) {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
@@ -83,7 +83,7 @@ export class ElectionController {
 		return { data: election };
 	}
 
-	@Put('skip')
+	@Patch('skip')
 	async skip(@Query('code') electionCode?: string) {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
@@ -119,7 +119,7 @@ export class ElectionController {
 		return { code, data: retrievedData };
 	}
 
-	@Post('update-candidate')
+	@Patch('update-candidate')
 	async updateCandidateState(@Body() updateCandidateDto: UpdateCandidateDto, @Query('code') electionCode?: string) {
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
