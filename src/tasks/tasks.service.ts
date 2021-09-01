@@ -24,6 +24,10 @@ export class TasksService {
 				},
 			});
 
+			if (results.count) {
+				this.logger.log(`Deleted ${results.count} election(s) in scheduled task.`);
+			}
+
 			return results;
 		} catch (error) {
 			this.logger.error(error);
