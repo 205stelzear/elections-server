@@ -59,7 +59,7 @@ export class VirtualElectionController {
 			throw new NotFoundException(`No election with code ${electionCode} found!`);
 		}
 
-		return { data: election };
+		return 'Thanks for voting! :)';
 	}
 
 	@Get('retrieve')
