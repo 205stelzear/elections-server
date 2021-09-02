@@ -11,30 +11,16 @@ generator client {
   previewFeatures = ["referentialActions", "nApi", "interactiveTransactions"]
 }
 
-generator nestgraphql {
-  provider = "node node_modules/prisma-nestjs-graphql"
-  output   = "../src/@generated/prisma-nestjs-graphql"
-  reExport = Directories
-
-  fields_Validator_from  = "class-validator"
-  fields_Validator_input = true
-}
-
 enum ElectionType {
   shared
   virtual
 }
 
 model Election {
-  /// @HideField({ output: false, input: true })
   id             Int          @id @default(autoincrement())
-  /// @HideField({ output: false, input: true })
   code           String       @unique
-  /// @HideField({ output: false, input: true })
   numberOfJoined Int          @default(0) @map("number_of_joined")
-  /// @HideField({ output: false, input: true })
   lastUsed       DateTime     @default(now()) @map("last_used")
-  /// @HideField({ output: false, input: true })
   type           ElectionType @default(shared)
 
   dbName                     String
@@ -48,7 +34,6 @@ model Election {
   hasSkipped                 Boolean  @default(false) @map("has_skipped")
   isDownloadDisabled         Boolean  @default(false) @map("is_download_disabled")
 
-  /// @Validator.IsNotEmpty()
   candidatesData Json
 
   photo Photo?
