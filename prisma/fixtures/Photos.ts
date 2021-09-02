@@ -1,5 +1,5 @@
 import { Photo, PrismaClient } from '@prisma/client';
-import * as f from 'faker';
+import f from 'faker';
 import { Fixture, LinkMethod } from 'prisma-fixtures';
 import ElectionFixture from './Elections';
 

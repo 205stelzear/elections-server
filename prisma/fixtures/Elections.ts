@@ -1,5 +1,5 @@
 import { Election, PrismaClient } from '@prisma/client';
-import * as f from 'faker';
+import f from 'faker';
 import { Fixture, LinkMethod } from 'prisma-fixtures';
 
 export default class ElectionFixture extends Fixture<Election> {
