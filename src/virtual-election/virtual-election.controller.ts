@@ -6,6 +6,7 @@ import {
 	Controller,
 	Get,
 	InternalServerErrorException,
+	Logger,
 	NotFoundException,
 	Patch,
 	Post,
@@ -15,6 +16,8 @@ import { VirtualElectionService } from './virtual-election.service';
 
 @Controller('virtual')
 export class VirtualElectionController {
+	private readonly logger = new Logger(VirtualElectionController.name);
+
 	constructor(private virtualElectionService: VirtualElectionService) {}
 
 	@Post('create')
@@ -65,6 +68,8 @@ export class VirtualElectionController {
 	@Get('retrieve')
 	async retrieve(@Query() query: Record<string, string | undefined>) {
 		const { code: electionCode, groupImage: qGroupImage, admin: qAdmin, ...otherQueries } = query;
+
+		this.logger.debug('Query element : ', query);
 
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
