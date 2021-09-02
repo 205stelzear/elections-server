@@ -64,15 +64,21 @@ export class VirtualElectionController {
 
 	@Get('retrieve')
 	async retrieve(@Query() query: Record<string, string | undefined>) {
-		const { code: electionCode, groupImage: qGroupImage, ...otherQueries } = query;
+		const { code: electionCode, groupImage: qGroupImage, admin: qAdmin, ...otherQueries } = query;
 
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
 
 		const doIncludePhoto = qGroupImage !== undefined;
+		const isAdmin = qAdmin !== undefined;
 
-		const electionRetrievedData = await this.virtualElectionService.retrieve(electionCode, doIncludePhoto, Object.keys(otherQueries));
+		const electionRetrievedData = await this.virtualElectionService.retrieve(
+			electionCode,
+			isAdmin,
+			doIncludePhoto,
+			Object.keys(otherQueries),
+		);
 
 		if (!electionRetrievedData) {
 			throw new NotFoundException(`No election with code ${electionCode} found!`);
