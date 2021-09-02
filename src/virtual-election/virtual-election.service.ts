@@ -39,7 +39,7 @@ export class VirtualElectionService {
 	}
 
 	async retrieve(code: string, _isAdmin: boolean, doIncludePhoto: boolean, specifyers?: string[]) {
-		const fixedSpecifiers = specifyers && ['numberOfVoted', ...specifyers];
+		const fixedSpecifiers = (specifyers?.length && ['numberOfVoted', ...specifyers]) || undefined;
 
 		const result = await this.electionService.retrieve(code, doIncludePhoto, fixedSpecifiers);
 
