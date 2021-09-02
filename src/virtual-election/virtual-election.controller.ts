@@ -69,8 +69,6 @@ export class VirtualElectionController {
 	async retrieve(@Query() query: Record<string, string | undefined>) {
 		const { code: electionCode, groupImage: qGroupImage, admin: qAdmin, ...otherQueries } = query;
 
-		this.logger.debug('Query element : ', query);
-
 		if (!electionCode) {
 			throw new BadRequestException('The "code" query parameter is required!');
 		}
