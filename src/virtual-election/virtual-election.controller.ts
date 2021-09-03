@@ -87,8 +87,8 @@ export class VirtualElectionController {
 			throw new NotFoundException(`No election with code ${electionCode} found!`);
 		}
 
-		const { code, numberOfVoted, ...retrievedData } = electionRetrievedData;
+		const { code, ...retrievedData } = electionRetrievedData;
 
-		return { code, data: retrievedData, voterCount: numberOfVoted };
+		return { code, data: retrievedData };
 	}
 }
