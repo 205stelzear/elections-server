@@ -2,9 +2,12 @@ name: PR Checks
 
 on:
   pull_request:
+    branches:
+      - master
+      - '!release-please**'
 
 env:
-  NODE_VERSION: '14'
+  NODE_VERSION: '16'
 
 jobs:
   lint:
