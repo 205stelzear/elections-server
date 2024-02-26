@@ -98,11 +98,13 @@ function deletePrismaGenerated() {
 
 // COMBINES
 
-export const build = gulp.series(deleteDist, buildNest, buildPrisma);
+export const setupPrisma = gulp.series(deletePrismaGenerated, generatePrismaHelpers);
 
-export const setupPrisma = gulp.series(deletePrismaGenerated, generatePrismaHelpers, updateDatabaseSchema);
+export const setupPrismaFull = gulp.series(setupPrisma, updateDatabaseSchema);
 
-export const init = gulp.parallel(deleteDist, gulp.series(setupEnv, setupPrisma));
+export const build = gulp.series(gulp.parallel(deleteDist, setupPrisma), buildNest, buildPrisma);
+
+export const init = gulp.parallel(deleteDist, gulp.series(setupEnv, setupPrismaFull));
 
 export const cleanBuild = gulp.series(init, build);
 
