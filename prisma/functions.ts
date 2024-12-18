@@ -72,7 +72,7 @@ export async function getPrismaClient() {
 	try {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		const { PrismaClient } = await import('../../src/_generated/prisma/client/index');
+		const { PrismaClient } = await import(`../node_modules/@prisma/client/index`);
 
 		return new PrismaClient();
 	} catch (error) {
